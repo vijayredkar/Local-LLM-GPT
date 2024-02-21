@@ -1,0 +1,32 @@
+package com.credit.check.service;
+
+import org.springframework.stereotype.Service;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
+
+	@Service
+	public class SpellCheckerService 
+	{
+		interface Translator 
+		{
+			//@SystemMessage("You are a professional spelling checker in {{language}}")
+			@SystemMessage("You are a professional spelling checker in {{language}}.")
+			
+			//@UserMessage("Fix typos in these names of regions of India and keep only the name {{text}}")
+			//@UserMessage("Please fix the spelling in the following text:  {{text}}")
+			//@UserMessage("Cioimbtore is misspelled. This is a region in India. Please spell check and provide the correct region name.")
+			//@UserMessage("What is the correctly spelled name of Cioimbtore?")
+			@UserMessage("Correct region names in India are Coimbatore, Delhi and Mumbai. Please generate your response fom this data only. What is the correct name of Cioimbtore?")
+			String translate(@V("text") String text, @V("language") String language);
+		}
+
+		public String spellCheck(ChatLanguageModel model, String text, String language) 
+		{
+			Translator translator = AiServices.create(Translator.class, model);
+
+			return translator.translate(text, language);
+		}
+	}
